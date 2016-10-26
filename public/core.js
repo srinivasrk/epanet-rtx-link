@@ -595,6 +595,9 @@ var rtxLink = angular.module('rtxLink', ['ngRoute','ui.bootstrap'])
   };
 
   $scope.addAnalytic = function() {
+    if (!$rootScope.config.analytics) {
+      $rootScope.config.analytics = [];
+    }
     $rootScope.config.analytics.push({"type":"New Analytic","_isOpen":true});
     console.log("added analytic");
   }

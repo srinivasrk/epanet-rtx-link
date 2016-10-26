@@ -7,7 +7,7 @@
   },
   "description": "RTX Link",
   "main": "electron_main.js",
-  "author": "Sam Hatchett<sam@citilogics.com>",
+  "author": "Sam Hatchett<samhatchett@gmail.com>",
   "license": "MIT",
   "repository": "http://github.com/OpenWaterAnalytics/RTX-LINK/",
   "dependencies": {

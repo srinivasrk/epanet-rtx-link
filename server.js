@@ -29,64 +29,6 @@ backupConfig = function(){
   // to-do: send config.json to the cloud, for backup
 };
 
-
-var AutoUpdater = require('auto-updater');
-var autoupdater = new AutoUpdater({
- pathToJson: '',
- autoupdate: true,
- checkgit: true,
- jsonhost: 'raw.githubusercontent.com',
- contenthost: 'codeload.github.com',
- progressDebounce: 0,
- devmode: false
-});
-// State the events
-autoupdater.on('git-clone', function() {
-  console.log("You have a clone of the repository. Use 'git pull' to be up-to-date");
-});
-autoupdater.on('check.up-to-date', function(v) {
-  console.info("Checked for update. You have the latest version: " + v);
-});
-autoupdater.on('check.out-dated', function(v_old, v) {
-  console.warn("Your version is outdated. " + v_old + " less than current version " + v);
-});
-autoupdater.on('update.downloaded', function() {
-  console.log("Update downloaded and ready for install");
-});
-autoupdater.on('update.not-installed', function() {
-  console.log("The Update was already in your folder! It's ready for install");
-});
-autoupdater.on('update.extracted', function() {
-  console.log("Update extracted successfully!");
-  console.warn("RESTARTING THE APP! PM2 BETTER CATCH ME!");
-  process.exitCode = 2; // exit gracefully
-});
-autoupdater.on('download.start', function(name) {
-  console.log("Starting download: " + name);
-});
-autoupdater.on('download.progress', function(name, perc) {
-  process.stdout.write("Downloading " + perc + "% \033[0G");
-});
-autoupdater.on('download.end', function(name) {
-  console.log("Downloaded " + name);
-});
-autoupdater.on('download.error', function(err) {
-  console.error("Error when downloading: " + err);
-});
-autoupdater.on('end', function() {
-  console.log("The app is ready to function");
-});
-autoupdater.on('error', function(name, e) {
-  console.error(name, e);
-});
-
-
-// set up autoupdate timer. check once daily.
-setInterval(function(){
-  backupConfig();
-  autoupdater.fire('check');
-}, (24*60*60*1000) );
-
 // ensure that the config file is there. create it if it does not exist.
 // these calls are blocking on purpose.
 try {
