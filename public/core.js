@@ -204,10 +204,46 @@ var rtxLink = angular.module('rtxLink', ['ngRoute','ui.bootstrap'])
     }
   };
 
+  $rootScope.destinationTypes = {
+    'influx': {
+      inputRows: [
+        {
+          key: 'name',
+          text: 'Name',
+          placeholder: 'User-defined Name',
+          inputType: 'text-line'
+        },
+        {
+          key: 'connectionString',
+          text: 'Connection',
+          placeholder: 'host=http://flux.citilogics.io&port=8086&db=dest_db&u=user&p=pass',
+          inputType: 'text-line'
+        }
+      ]
+    },
+    'influx_udp': {
+      inputRows: [
+        {
+          key: 'name',
+          text: 'Name',
+          placeholder: 'User-defined Name',
+          inputType: 'text-line'
+        },
+        {
+          key: 'connectionString',
+          text: 'Connection',
+          placeholder: 'host=http://flux.citilogics.io&port=8089',
+          inputType: 'text-line'
+        }
+      ]
+    }
+  };
+
   $rootScope.rtxTypes = {
     'odbc': 'ODBC',
     'sqlite': 'SQLite',
     'influx': 'Influx',
+    'influx_udp': "Influx-UDP",
     'opc': 'OPC'
   };
 
@@ -551,7 +587,6 @@ var rtxLink = angular.module('rtxLink', ['ngRoute','ui.bootstrap'])
   };
 
   $scope.connect = function (callback, errCallback) {
-    $rootScope.config.destination._class = 'influx';
     $scope.connectionMessage = "Trying Connection...";
     $scope.connectionStatus = "wait";
     $rootScope.postConfig('destination',
@@ -572,6 +607,16 @@ var rtxLink = angular.module('rtxLink', ['ngRoute','ui.bootstrap'])
         typeof errCallback == "function" && errCallback();
     });
   };
+
+  $scope.isType = function (typeName) {
+    return typeName === $rootScope.config.destination._class;
+  };
+  $scope.setDestinationType = function (typeName) {
+    $rootScope.config.destination = {_class: typeName};
+  };
+
+
+
 
   // ON LOAD
   $scope.connectionMessage = "";

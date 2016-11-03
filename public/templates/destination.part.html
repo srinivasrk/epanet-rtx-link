@@ -6,10 +6,17 @@
 
 <!-- Destination -->
 <div id="destination-select">
+  <div class="form-group pull-left">
+      <ul class="nav nav-pills">
+          <li role="presentation"  ng-repeat="(type,plist) in destinationTypes" ng-class="{ active: isType(type) }" ng-click="setDestinationType(type)">
+              <a>{{rtxTypes[type]}}</a>
+          </li>
+      </ul>
+  </div>
     <form role="form" class='form-horizontal'>
         <table class="table">
             <tbody>
-            <tr ng-repeat="dict in sourceTypes['influx'].inputRows" ng-switch on="dict.inputType">
+            <tr ng-repeat="dict in destinationTypes[config.destination._class].inputRows" ng-switch on="dict.inputType">
                 <th scope="row">{{dict.text}}</th>
                 <td>
                     <input type="text" class="form-control" placeholder="{{dict.placeholder}}" ng-model="config.destination[dict.key]">
