@@ -1,5 +1,5 @@
-# dockerfile for rtx-link application
-FROM ubuntu:16.04
+# dockerfile for rtx-link application on raspberry pi
+FROM armv7/armhf-ubuntu:16.04
 MAINTAINER Sam Hatchett <sam@citilogics.com>
 
 RUN apt-get update && \
@@ -24,6 +24,7 @@ RUN git clone https://github.com/Microsoft/cpprestsdk.git casablanca && \
 	cd build.release && \
 	cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_SAMPLES=0 -DBUILD_TESTS=0 && \
 	make && make install
+RUN rm -rf casablanca
 
 # install NODEJS - runtime for LINK frontend application
 RUN curl -sL https://deb.nodesource.com/setup_6.x | bash - && \
@@ -45,6 +46,7 @@ RUN git clone https://github.com/OpenWaterAnalytics/RTX-LINK rtx-link && \
 
 # copy the LINK-service app into the nodejs bundle
 RUN cp epanet-rtx/examples/LINK-service/cmake/build/bin/* rtx-link/srv/linux/
+RUN rm -rf epanet-rtx
 
 EXPOSE 8585 3131
 VOLUME /root/rtx_link
