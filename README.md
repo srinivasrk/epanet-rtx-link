@@ -10,6 +10,6 @@ curl https://raw.githubusercontent.com/OpenWaterAnalytics/RTX-LINK/master/docker
 curl https://raw.githubusercontent.com/OpenWaterAnalytics/RTX-LINK/master/docker/Dockerfile-rpi > Dockerfile
 # ... or download Dockerfile-rpi for raspberry install
 docker build -t rtx-link -f Dockerfile .
-docker run --restart always -d -p 3131:3131 -p "8585:8585" -v "/root/link:~/RTX_LINK_DOCKER/cfg" --name link-app rtx-link 
+docker run --restart always -d -p 3131:3131 -p "8585:8585" -v "$(pwd)/RTX_LINK_DOCKER/cfg:/root/rtx_link" --name link-app rtx-link 
 ```
 
