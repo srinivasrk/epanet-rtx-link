@@ -7,7 +7,7 @@ To build/deploy on a raspberry pi device:
 
 ```
 curl https://github.com/OpenWaterAnalytics/RTX-LINK/archive/master.zip > RTX-LINK-master.zip
-unzip link.zip
+unzip RTX-LINK-master.zip
 cd RTX-LINK-master
 ./build.sh -p rpi -b dist -r
 ```
