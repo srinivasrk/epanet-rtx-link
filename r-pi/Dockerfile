@@ -16,6 +16,8 @@ RUN apt-get update && \
 	git \
 	curl
 
+WORKDIR /opt
+
 # build microsoft's cpprestsdk - library for rest i/o
 RUN git clone https://github.com/Microsoft/cpprestsdk.git casablanca && \
 	cd casablanca/Release && \
@@ -33,21 +35,24 @@ RUN curl -sL https://deb.nodesource.com/setup_6.x | bash - && \
 # setup tds as odbc driver - allows connection to MSSQL hosts
 COPY odbcinst.ini /etc/odbcinst.ini
 
-# build and install RTX library with LINK-service (duplication engine without UI)
-RUN git clone https://github.com/OpenWaterAnalytics/epanet-rtx epanet-rtx && \
-	cd epanet-rtx && git checkout dev && \
-	cd examples/LINK-service/cmake && mkdir build && cd build && \
-	cmake .. && make
+COPY epanet-rtx epanet-rtx
+WORKDIR /opt/epanet-rtx
+
+## build LINK service (rtx-based tier-2 data synchronization service)
+RUN cd examples/LINK/service/cmake && \
+    mkdir build && \
+    cd build && \
+    cmake .. && \
+    make
 
 # install node frontend application and dependencies
-RUN git clone https://github.com/OpenWaterAnalytics/RTX-LINK rtx-link && \
-	cd rtx-link &&\
+RUN cd examples/LINK/frontend &&\
 	npm install
 
 # copy the LINK-service app into the nodejs bundle
-RUN cp epanet-rtx/examples/LINK-service/cmake/build/bin/* rtx-link/srv/linux/
-RUN rm -rf epanet-rtx
+WORKDIR /opt/epanet-rtx/examples/LINK
+RUN mkdir frontend/srv && mkdir frontend/srv/linux/ && mv service/cmake/build/bin/* frontend/srv/linux/
 
-EXPOSE 8585 3131
+EXPOSE 8585
 VOLUME /root/rtx_link
-CMD [ "nodejs", "rtx-link/server.js" ]
+CMD [ "nodejs", "frontend/server.js" ]
