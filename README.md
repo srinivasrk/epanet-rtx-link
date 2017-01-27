@@ -9,10 +9,13 @@ To build/run on a raspberry pi device:
 curl -L https://github.com/OpenWaterAnalytics/RTX-LINK/archive/master.zip > RTX-LINK-master.zip
 unzip RTX-LINK-master.zip
 cd RTX-LINK-master
-./build.sh -p rpi -b dist -r
+./build.sh -p rpi -b dist
+cd 
+mkdir link_vol # make local directory for link volume mount
+docker run -d -v ${PWD}/link_vol:/root/rtx_link --restart=always --name rtx_link -p 8585:8585 rtx_link
 ```
 
-To ensure that LINK runs when the PI boots:
+To ensure that LINK runs when the PI boots (not required since Docker v1.12):
 
 ```
 ## write a new service for the LINK docker container:
