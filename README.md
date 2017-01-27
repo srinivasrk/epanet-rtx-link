@@ -3,6 +3,11 @@
 This docker build-script will build and deploy the RTX-LINK data syncronization tool on x86 or ARMx hardware, as a preflight/test or distributable build. 
 See `build.sh` for usage.
 
+If you have a development setup with a common root repo directory, you can build/run the container with these options:
+```
+./build.sh -p x86 -b preflight -r
+```
+
 To build/run on a raspberry pi device:
 
 ```
