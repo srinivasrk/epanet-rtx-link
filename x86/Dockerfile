@@ -27,6 +27,12 @@ RUN git clone https://github.com/Microsoft/cpprestsdk.git casablanca && \
 	make && make install
 RUN rm -rf casablanca
 
+## install sqlite_modern dep
+RUN git clone https://github.com/aminroosta/sqlite_modern_cpp.git \
+	&& cp -R sqlite_modern_cpp/hdr/* /usr/local/include/ \
+	&& cd /opt \
+	&& rm -rf sqlite_modern_cpp
+
 # install NODEJS - runtime for LINK frontend application
 RUN curl -sL https://deb.nodesource.com/setup_6.x | bash - && \
 	apt-get -y install nodejs
