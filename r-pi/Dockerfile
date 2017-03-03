@@ -15,7 +15,7 @@ RUN apt-get update && \
 	libssl-dev \
 	git \
 	curl \
-	libcpprest-sdk
+	libcpprest-dev
 
 WORKDIR /opt
 
