@@ -14,19 +14,10 @@ RUN apt-get update && \
 	openssl \
 	libssl-dev \
 	git \
-	curl
+	curl \
+	libcpprest-sdk
 
 WORKDIR /opt
-
-# build microsoft's cpprestsdk - library for rest i/o
-RUN git clone https://github.com/Microsoft/cpprestsdk.git casablanca && \
-	cd casablanca/Release && \
-	sed -e 's/ -Wcast-align//g' -i CMakeLists.txt  && \
-	mkdir build.release && \
-	cd build.release && \
-	cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_SAMPLES=0 -DBUILD_TESTS=0 && \
-	make && make install
-RUN rm -rf casablanca
 
 ## install sqlite_modern dep
 RUN git clone https://github.com/aminroosta/sqlite_modern_cpp.git \
