@@ -11,8 +11,8 @@ If you have a development setup with a common root repo directory, you can build
 To build/run on a raspberry pi device:
 
 ```
-curl -L https://github.com/OpenWaterAnalytics/RTX-LINK/archive/master.zip > RTX-LINK-master.zip
-unzip RTX-LINK-master.zip
+curl -L https://github.com/OpenWaterAnalytics/RTX-LINK/archive/master.tar.gz > RTX-LINK-master.tar.gz
+tar -xzf RTX-LINK-master.tar.gz
 cd RTX-LINK-master
 ./build.sh -p rpi -b dist
 cd 
