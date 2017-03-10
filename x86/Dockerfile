@@ -1,41 +1,6 @@
 # dockerfile for rtx-link application
-FROM ubuntu:16.04
+FROM citilogics/dev-base:latest
 MAINTAINER Sam Hatchett <sam@citilogics.com>
-
-RUN apt-get update && \
-	apt-get -y install \
-	libsqlite3-dev \
-	cmake \
-	libiodbc2-dev \
-	tdsodbc \
-	libboost-all-dev \
-	libcurl4-openssl-dev \
-	g++ \
-	openssl \
-	libssl-dev \
-	git \
-	curl
-
-WORKDIR /opt
-
-# build microsoft's cpprestsdk - library for rest i/o
-RUN git clone https://github.com/Microsoft/cpprestsdk.git casablanca && \
-	cd casablanca/Release && \
-	mkdir build.release && \
-	cd build.release && \
-	cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_SAMPLES=0 -DBUILD_TESTS=0 && \
-	make && make install
-RUN rm -rf casablanca
-
-## install sqlite_modern dep
-RUN git clone https://github.com/aminroosta/sqlite_modern_cpp.git \
-	&& cp -R sqlite_modern_cpp/hdr/* /usr/local/include/ \
-	&& cd /opt \
-	&& rm -rf sqlite_modern_cpp
-
-# install NODEJS - runtime for LINK frontend application
-RUN curl -sL https://deb.nodesource.com/setup_6.x | bash - && \
-	apt-get -y install nodejs
 
 # setup tds as odbc driver - allows connection to MSSQL hosts
 COPY odbcinst.ini /etc/odbcinst.ini
