@@ -1,6 +1,6 @@
 # fresh os:
-#sudo apt-get update
-#sudo apt-get -s dist-upgrade | grep "^Inst" | grep -i securi | awk -F " " {'print $2'} | xargs sudo apt-get install
+sudo apt-get update
+sudo apt-get -s dist-upgrade | grep "^Inst" | grep -i securi | awk -F " " {'print $2'} | xargs sudo apt-get install
 
 sudo apt-get install -y raspi-config unzip rsync python-smbus i2c-tools
 sudo modprobe rtc-ds1307
