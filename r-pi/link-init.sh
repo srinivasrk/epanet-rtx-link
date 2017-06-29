@@ -9,8 +9,8 @@ sudo apt-get install -y raspi-config unzip rsync python-smbus i2c-tools
 #dtoverlay=i2c-rtc,ds3231
 #EOF'
 
-modprobe rtc-ds1307
-
+sudo modprobe rtc-ds1307
+ 	
 ## append to /etc/modules :: 
 sudo bash -c 'cat << EOF >> /etc/modules
 rtc-ds1307
