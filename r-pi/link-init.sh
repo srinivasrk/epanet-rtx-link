@@ -23,6 +23,11 @@ sudo sed -i -e '/\/run\/systemd\/system/,+2 s/^/#/' /lib/udev/hwclock-set
 sudo systemctl stop fake-hwclock.service
 sudo systemctl disable fake-hwclock.service
 
+# hwclock device
+sudo bash -c 'echo ds3231 0x68 > /sys/bus/i2c/devices/i2c-1/new_device'
+sudo hwclock -s -f /dev/rtc
+
+
 # Create the script with
 sudo mkdir /usr/lib/systemd/scripts
 sudo bash -c 'cat << EOF > /usr/lib/systemd/scripts/rtc
