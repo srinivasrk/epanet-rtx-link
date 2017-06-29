@@ -26,6 +26,8 @@ sudo systemctl disable fake-hwclock.service
 # hwclock device
 sudo bash -c 'echo ds3231 0x68 > /sys/bus/i2c/devices/i2c-1/new_device'
 
+echo "Setting up rtc device configuration as systemd service"
+
 # Create the script with
 sudo mkdir /usr/lib/systemd/scripts
 sudo bash -c 'cat << EOF > /usr/lib/systemd/scripts/rtc
@@ -56,8 +58,13 @@ sudo systemctl start rtc
 # If you receive no errors, you can enable this to run at boot with
 sudo systemctl enable rtc
 
+echo "Waiting for a few seconds."
+sleep 5
+
 # write system time to hw clock
 sudo hwclock -w
 
+echo "Rebooting in a few seconds..."
+sleep 3
 
 sudo reboot
