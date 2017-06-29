@@ -25,8 +25,6 @@ sudo systemctl disable fake-hwclock.service
 
 # hwclock device
 sudo bash -c 'echo ds3231 0x68 > /sys/bus/i2c/devices/i2c-1/new_device'
-sudo hwclock -s -f /dev/rtc
-
 
 # Create the script with
 sudo mkdir /usr/lib/systemd/scripts
