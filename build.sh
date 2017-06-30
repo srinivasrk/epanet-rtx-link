@@ -92,9 +92,16 @@ case "$platform" in
 esac
 rsync -azhe ssh --progress ./${plat_dir}/* tmp/
 
-# build and run the docker container
+# build the docker container
 cd tmp
-docker build -t rtx_link .
+
+# build the binary using the dev environment.
+docker rm rtx_link_build
+docker build -t link-build-img -f build . && \
+	docker create --name rtx_link_build link-build-img && \
+	docker cp rtx_link_build:/usr/local/bin/link-server ./link-server
+
+docker build -t rtx_link -f deploy .
 if ! [[ -z "$runflag" ]]; then
 	docker run -d --restart=always --name rtx_link -p 8585:8585 rtx_link
 fi
