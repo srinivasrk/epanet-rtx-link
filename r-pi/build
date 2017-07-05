@@ -30,34 +30,25 @@ RUN tar xfz ${boost_dir}.tar.gz \
     && cd .. && rm -rf ${boost_dir} && ldconfig
 
 
-
-WORKDIR /opt
+WORKDIR /opt/src
 
 ### install cpprestsdk library
-RUN cd /opt/src \
-	&& git clone https://github.com/Microsoft/cpprestsdk.git casablanca \
+RUN git clone https://github.com/Microsoft/cpprestsdk.git casablanca \
 	&& cd casablanca/Release \
 	&& mkdir build.release \
 	&& cd build.release \
 	&& cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=0 -DBUILD_SAMPLES=0 -DBUILD_SHARED_LIBS=0 -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
 	&& make \
-	&& make install \
-	&& cd /opt/src \
-	&& rm -rf casablanca
+	&& make install
 
 ## install sqlite_modern dep
-RUN cd /opt/src \
-	&& git clone https://github.com/aminroosta/sqlite_modern_cpp.git \
-	&& cp -R sqlite_modern_cpp/hdr/* /usr/local/include/ \
-	&& cd /opt/src \
-	&& rm -rf sqlite_modern_cpp
+RUN git clone https://github.com/aminroosta/sqlite_modern_cpp.git \
+	&& cp -R sqlite_modern_cpp/hdr/* /usr/local/include/
 
 ## install cpprestsdk convenience framework
 RUN curl -L -o granada.tar.gz https://github.com/webappsdk/granada/archive/1.56.0.tar.gz \
 	&& tar -xzf granada.tar.gz \
-	&& cp -R granada-1.56.0/Release/include/granada /usr/local/include \
-	&& cd /opt/src \
-	&& rm -rf granada
+	&& cp -R granada-1.56.0/Release/include/granada /usr/local/include
 
 COPY epanet-rtx epanet-rtx
 WORKDIR /opt/epanet-rtx
