@@ -51,6 +51,7 @@ RUN curl -L -o granada.tar.gz https://github.com/webappsdk/granada/archive/1.56.
 	&& tar -xzf granada.tar.gz \
 	&& cp -R granada-1.56.0/Release/include/granada /usr/local/include
 
+WORKDIR /opt
 COPY epanet-rtx epanet-rtx
 WORKDIR /opt/epanet-rtx
 
