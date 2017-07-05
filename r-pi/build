@@ -33,13 +33,15 @@ RUN tar xfz ${boost_dir}.tar.gz \
 WORKDIR /opt/src
 
 ### install cpprestsdk library
-RUN git clone https://github.com/Microsoft/cpprestsdk.git casablanca \
-	&& cd casablanca/Release \
-	&& mkdir build.release \
-	&& cd build.release \
-	&& cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=0 -DBUILD_SAMPLES=0 -DBUILD_SHARED_LIBS=0 -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
-	&& make \
-	&& make install
+RUN apt-get -y install libcpprest-dev
+
+#RUN git clone https://github.com/Microsoft/cpprestsdk.git casablanca \
+#	&& cd casablanca/Release \
+#	&& mkdir build.release \
+#	&& cd build.release \
+#	&& cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=0 -DBUILD_SAMPLES=0 -DBUILD_SHARED_LIBS=0 -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
+#	&& make \
+#	&& make install
 
 ## install sqlite_modern dep
 RUN git clone https://github.com/aminroosta/sqlite_modern_cpp.git \
