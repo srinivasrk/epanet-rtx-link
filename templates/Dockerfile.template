@@ -1,16 +1,20 @@
 # dockerfile for multistage build/deploy rtx-link application on x86
 FROM <base_image> as builder
 
+#<build_start>
+
 # this layer is shared with deploy:
 RUN apt-get update && \
 	apt-get install -y libiodbc2 tdsodbc openssl libsqlite3-dev curl
 	
+	
 RUN apt-get update && \
 	apt-get install -y \
+	g++ \
+	make \
 	cmake \
 	libiodbc2-dev \
 	libcurl4-openssl-dev \
-	g++ \
 	libssl-dev \
 	git \
 	llvm clang \
@@ -69,6 +73,7 @@ RUN cd examples/LINK/service/cmake && \
     cmake .. && \
     make && make install
 
+#<build_end>
 
 ###############################
 ## ^^^ builder ^^^ ############
@@ -78,6 +83,8 @@ RUN cd examples/LINK/service/cmake && \
 
 
 FROM <base_image> as deploy
+
+#<build_start>
 
 # this layer recycled from build:
 RUN apt-get update && \
@@ -97,6 +104,8 @@ WORKDIR /app
 
 # install node frontend application and dependencies
 RUN npm install
+
+#<build_end>
 
 EXPOSE 8585
 VOLUME /root/rtx_link

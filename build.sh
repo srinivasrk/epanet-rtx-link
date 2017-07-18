@@ -50,7 +50,7 @@ while getopts rb:p: opt; do
 done
 
 if [[ -z "$buildtype" ]] || [[ -z "$platform" ]]; then
-	echo "Usage: ${0} -b [dist,preflight] -p [arm,x86] (-r)
+	echo "Usage: ${0} -b [dist,preflight] -p [arm,x86,cross] (-r)
 	-b build-type
 	-p platform-type
 	-r run-after-build
@@ -72,7 +72,8 @@ esac
 case "$platform" in 
 	arm) echo "Platform is arm" ;;
 	x86) echo "Platform is x86-64." ;;
-	*) echo "Please specify platform type: [arm,x86]" && exit 1 ;;
+	cross) echo "Cross-build for arm on x86 using QEMU." ;;
+	*) echo "Please specify platform type: [arm,x86,cross]" && exit 1 ;;
 esac
 
 # make temp directory for build assets
@@ -100,11 +101,20 @@ case "$platform" in
 	x86) base_img="ubuntu:yakkety" 
 	     tds_path="x86_64-linux-gnu"
 	     ;;
+	cross) base_img="resin/armv7hf-debian-qemu"
+	       tds_path="arm-linux-gnuabihf"
+	       ;;
 esac
 
 # replace base image declaration in dockerfile
 sed "s|<base_image>|${base_img}|" templates/Dockerfile.template > tmp/Dockerfile
 sed "s|<tds_path>|${tds_path}|" templates/odbcinst.ini.template > tmp/odbcinst.ini
+
+case "$platform" in
+    cross)  sed -i '.bak' 's/#<build_start>/RUN ["cross-build-start"]/' tmp/Dockerfile
+            sed -i '.bak' 's/#<build_end>/RUN ["cross-build-end"]/' tmp/Dockerfile
+            ;;
+esac
 
 # build the docker container
 cd tmp
