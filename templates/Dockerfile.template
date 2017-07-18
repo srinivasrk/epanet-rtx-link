@@ -1,10 +1,20 @@
-# dockerfile for building rtx-link application on x86
-FROM ubuntu:xenial
+# dockerfile for multistage build/deploy rtx-link application on x86
+FROM <base_image> as builder
 
+# this layer is shared with deploy:
 RUN apt-get update && \
-	apt-get install -y libsqlite3-dev cmake libiodbc2-dev tdsodbc curl libcurl4-openssl-dev g++ openssl libssl-dev git
-RUN apt-get install -y llvm clang
-RUN apt-get install -y wget
+	apt-get install -y libiodbc2 tdsodbc openssl libsqlite3-dev curl
+	
+RUN apt-get update && \
+	apt-get install -y \
+	cmake \
+	libiodbc2-dev \
+	libcurl4-openssl-dev \
+	g++ \
+	libssl-dev \
+	git \
+	llvm clang \
+	wget
 
 ## build / install boost
 ARG boost_version=1.63.0
@@ -26,16 +36,14 @@ WORKDIR /opt
 RUN mkdir /opt/src
 
 ### install cpprestsdk library
-RUN cd /opt/src \
-	&& git clone https://github.com/Microsoft/cpprestsdk.git casablanca \
+RUN git clone https://github.com/Microsoft/cpprestsdk.git casablanca \
 	&& cd casablanca/Release \
+	&& sed -e 's/ -Wcast-align//g' -i CMakeLists.txt \
 	&& mkdir build.release \
 	&& cd build.release \
 	&& cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=0 -DBUILD_SAMPLES=0 -DBUILD_SHARED_LIBS=0 -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
 	&& make \
-	&& make install \
-	&& cd /opt/src \
-	&& rm -rf casablanca
+	&& make install
 
 ## install sqlite_modern dep
 RUN cd /opt/src \
@@ -60,4 +68,49 @@ RUN cd examples/LINK/service/cmake && \
     cd build && \
     cmake .. && \
     make && make install
+
+
+###############################
+## ^^^ builder ^^^ ############
+###############################
+## vvv deploy vvvv ############
+###############################
+
+
+FROM <base_image> as deploy
+
+# this layer recycled from build:
+RUN apt-get update && \
+	apt-get install -y libiodbc2 tdsodbc openssl libsqlite3-dev curl
+
+# install NODEJS - runtime for LINK frontend application
+RUN curl -sL https://deb.nodesource.com/setup_8.x | bash && \
+	apt-get -y install nodejs
+
+COPY odbcinst.ini /etc/odbcinst.ini
+
+# copy the frontend and service binary
+COPY epanet-rtx/examples/LINK/frontend /app
+COPY --from=builder /usr/local/bin/link-server /app/srv/linux/link-server
+
+WORKDIR /app
+
+# install node frontend application and dependencies
+RUN npm install
+
+EXPOSE 8585
+VOLUME /root/rtx_link
+CMD [ "nodejs", "server.js" ]
+
+
+
+
+
+
+
+
+
+
+
+
 

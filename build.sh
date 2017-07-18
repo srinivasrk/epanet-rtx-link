@@ -17,6 +17,13 @@ echo "
 "
 
 
+# 
+# specify the base image with "-p" platform switch
+# default is 
+# arm=FROM armv7/armhf-ubuntu:yakkety
+# x86=FROM ubuntu:yakkety
+
+
 while getopts rb:p: opt; do
 	case "${opt}" in
 		b)
@@ -24,7 +31,7 @@ while getopts rb:p: opt; do
 			buildtype=$OPTARG
 			;;
 		p)
-			# set platform (rpi,x86)
+			# set platform (arm,x86)
 			platform=$OPTARG
 			;;
 		r)
@@ -43,7 +50,7 @@ while getopts rb:p: opt; do
 done
 
 if [[ -z "$buildtype" ]] || [[ -z "$platform" ]]; then
-	echo "Usage: ${0} -b [dist,preflight] -p [rpi,x86] (-r)
+	echo "Usage: ${0} -b [dist,preflight] -p [arm,x86] (-r)
 	-b build-type
 	-p platform-type
 	-r run-after-build
@@ -63,9 +70,9 @@ esac
 
 # check platform argument validity
 case "$platform" in 
-	rpi) echo "Platform is raspberry-pi" ;;
+	arm) echo "Platform is arm" ;;
 	x86) echo "Platform is x86-64." ;;
-	*) echo "Please specify platform type: [rpi,x86]" && exit 1 ;;
+	*) echo "Please specify platform type: [arm,x86]" && exit 1 ;;
 esac
 
 # make temp directory for build assets
@@ -87,21 +94,25 @@ esac
 
 # which docker file to use
 case "$platform" in
-	rpi) plat_dir="r-pi" ;;
-	x86) plat_dir="x86" ;;
+	arm) base_img="armv7/armhf-ubuntu:yakkety"
+		 tds_path="arm-linux-gnueabihf" 
+		 ;;
+	x86) base_img="ubuntu:yakkety" 
+	     tds_path="x86_64-linux-gnu"
+	     ;;
 esac
-rsync -azhe ssh --progress ./${plat_dir}/* tmp/
+
+# replace base image declaration in dockerfile
+sed "s|<base_image>|${base_img}|" templates/Dockerfile.template > tmp/Dockerfile
+sed "s|<tds_path>|${tds_path}|" templates/odbcinst.ini.template > tmp/odbcinst.ini
 
 # build the docker container
 cd tmp
 
 # build the binary using the dev environment.
-docker rm rtx_link_build
-docker build -t link-build-img -f build . && \
-	docker create --name rtx_link_build link-build-img && \
-	docker cp rtx_link_build:/usr/local/bin/link-server ./link-server
+docker rm rtx_link
+docker build -t rtx_link .
 
-docker build -t rtx_link -f deploy .
 if ! [[ -z "$runflag" ]]; then
 	docker run -d --restart=always --name rtx_link -p 8585:8585 rtx_link
 fi
