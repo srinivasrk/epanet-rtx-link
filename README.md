@@ -14,7 +14,7 @@ To build/run on a raspberry pi device:
 curl -L https://github.com/OpenWaterAnalytics/RTX-LINK/archive/master.tar.gz > RTX-LINK-master.tar.gz
 tar -xzf RTX-LINK-master.tar.gz
 cd RTX-LINK-master
-./build.sh -p rpi -b dist
+./build.sh -p arm -b dist
 cd 
 mkdir link_vol # make local directory for link volume mount
 docker run -d -v ${PWD}/link_vol:/root/rtx_link --restart=always --name rtx_link -p 8585:8585 rtx_link
