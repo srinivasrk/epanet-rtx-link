@@ -6,8 +6,8 @@ FROM <base_image> as builder
 # this layer is shared with deploy:
 RUN apt-get update && \
 	apt-get install -y libiodbc2 tdsodbc openssl libsqlite3-dev curl
-	
-	
+
+
 RUN apt-get update && \
 	apt-get install -y \
 	g++ \
@@ -97,29 +97,17 @@ RUN curl -sL https://deb.nodesource.com/setup_8.x | bash && \
 COPY odbcinst.ini /etc/odbcinst.ini
 
 # copy the frontend and service binary
-COPY epanet-rtx/examples/LINK/frontend /app
+COPY link-frontend /app
 COPY --from=builder /usr/local/bin/link-server /app/srv/linux/link-server
 
 WORKDIR /app
 
 # install node frontend application and dependencies
 RUN npm install
+RUN npm run build
 
 #<build_end>
 
-EXPOSE 8585
+EXPOSE 3000
 VOLUME /root/rtx_link
-CMD [ "nodejs", "server.js" ]
-
-
-
-
-
-
-
-
-
-
-
-
-
+CMD [ "npm", "start" ]

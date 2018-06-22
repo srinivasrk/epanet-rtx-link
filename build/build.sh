@@ -1,27 +1,27 @@
 #!/bin/bash
 
 echo "
-██████╗ ████████╗██╗  ██╗    
-██╔══██╗╚══██╔══╝╚██╗██╔╝    
-██████╔╝   ██║    ╚███╔╝     
-██╔══██╗   ██║    ██╔██╗     
-██║  ██║   ██║   ██╔╝ ██╗    
-╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝    
-                             
+██████╗ ████████╗██╗  ██╗
+██╔══██╗╚══██╔══╝╚██╗██╔╝
+██████╔╝   ██║    ╚███╔╝
+██╔══██╗   ██║    ██╔██╗
+██║  ██║   ██║   ██╔╝ ██╗
+╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝
+
 ██╗     ██╗███╗   ██╗██╗  ██╗
 ██║     ██║████╗  ██║██║ ██╔╝
-██║     ██║██╔██╗ ██║█████╔╝ 
-██║     ██║██║╚██╗██║██╔═██╗ 
+██║     ██║██╔██╗ ██║█████╔╝
+██║     ██║██║╚██╗██║██╔═██╗
 ███████╗██║██║ ╚████║██║  ██╗
 ╚══════╝╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝
 "
 
 
-# 
+#
 # specify the base image with "-p" platform switch
-# default is 
-# arm=FROM armv7/armhf-ubuntu:yakkety
-# x86=FROM ubuntu:yakkety
+# default is
+# arm=FROM arm64v8/ubuntu:artful
+# x86=FROM ubuntu:artful
 
 
 while getopts rb:p: opt; do
@@ -62,14 +62,14 @@ fi
 shift $(($OPTIND-1))
 
 # check build type argument validity
-case "$buildtype" in 
+case "$buildtype" in
 	dist) echo "Build type is dist" ;;
 	preflight) echo "Build type is preflight. Using local assets." ;;
 	*) echo "Please specify build type: [dist,preflight]" && exit 1 ;;
 esac
 
 # check platform argument validity
-case "$platform" in 
+case "$platform" in
 	arm) echo "Platform is arm" ;;
 	x86) echo "Platform is x86-64." ;;
 	cross) echo "Cross-build for arm on x86 using QEMU." ;;
@@ -82,10 +82,10 @@ mkdir tmp
 
 # determine build type
 case "$buildtype" in
-	preflight) 
+	preflight)
 	# preflight build assumes local repositories that share a root directory
 	# with this script's containing directory
-	rsync -azhe ssh --exclude '.git' --exclude 'build/cmake/build' --cvs-exclude "../epanet-rtx/" tmp/epanet-rtx
+	rsync -azhe ssh --cvs-exclude --exclude '.git' --exclude 'build/cmake/build' ../../epanet-rtx/ tmp/epanet-rtx
 	;;
 	dist)
 	# dist assumes you want to download assets from the web.
@@ -93,12 +93,14 @@ case "$buildtype" in
 	;;
 esac
 
+rsync -azhe ssh --cvs-exclude --exclude 'node_modules' --exclude '.git' ../frontend/ tmp/link-frontend
+
 # which docker file to use
 case "$platform" in
-	arm) base_img="armv7/armhf-ubuntu:yakkety"
-		 tds_path="arm-linux-gnueabihf" 
+	arm) base_img="arm64v8/ubuntu:artful"
+		 tds_path="arm-linux-gnueabihf"
 		 ;;
-	x86) base_img="ubuntu:yakkety" 
+	x86) base_img="ubuntu:artful"
 	     tds_path="x86_64-linux-gnu"
 	     ;;
 	cross) base_img="resin/armv7hf-debian-qemu"
@@ -120,11 +122,11 @@ esac
 cd tmp
 
 # build the binary using the dev environment.
-docker rm rtx_link
-docker build -t rtx_link .
+docker rm rtx-link
+docker build -t rtx-link .
 
 if ! [[ -z "$runflag" ]]; then
-	docker run -d --restart=always --name rtx_link -p 8585:8585 rtx_link
+	docker run -d --restart=always --name rtx_link -p 3000:3000 rtx_link
 fi
 
 echo "DONE"
