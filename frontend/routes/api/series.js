@@ -10,7 +10,7 @@ export function post(req, res, next) {
   if (req.files) {
     console.log('files are present');
     // parse the incoming csv and format it for LINK consumption
-    var parser = parse();
+    var parser = parse({quotes:true});
     var tsJson = [];
     parser.on('readable', () => {
       let r = parser.read();
