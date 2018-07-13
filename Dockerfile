@@ -66,9 +66,9 @@ RUN curl -L -o granada.tar.gz https://github.com/webappsdk/granada/archive/1.56.
         && cd /opt/src \
         && rm -rf granada
 
-RUN git clone https://github.com/srinivasrk/epanet-rtx.git \
+RUN git clone https://github.com/OpenWaterAnalytics/epanet-rtx.git \
         && cd epanet-rtx \
-        && git checkout srini/update-ubuntubionic
+        && git checkout dev
 
 WORKDIR /opt/epanet-rtx
 
