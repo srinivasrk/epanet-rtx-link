@@ -40,3 +40,4 @@ jspm_packages
 
 tmp/
 
+.DS_Store

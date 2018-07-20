@@ -15,6 +15,9 @@ let shared = {
       return response;
     }
 		else {
+      response.json().then(r => {
+        alert(r.error);
+      });
     	throw Error(`${response.statusText} ${response.url}`);
 		}
 	}
