@@ -3,7 +3,7 @@
 
 Development Mode
 ```bash
-NODE_ENV=devlopment LINK_LOGIN_USER=admin LINK_LOGIN_PASS=pass npm run dev
+NODE_ENV=development LINK_LOGIN_USER=admin LINK_LOGIN_PASS=pass npm run dev
 ```
 
 Open up [localhost:3000](http://localhost:3000) and start clicking around.
