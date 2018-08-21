@@ -10,14 +10,14 @@ export function post(req, res, next) {
   if (req.files) {
     console.log('files are present');
     // parse the incoming csv and format it for LINK consumption
-    var parser = parse({quote:true});
+    var parser = parse({ltrim:true, quote:'"'});
     var tsJson = [];
     parser.on('readable', () => {
       let r = parser.read();
       if (!r) {
         return;
       }
-      // console.log('reading line: ', r);
+      //console.log('reading line: ', r);
       if (r.length !== 4) {
         return;
       }
@@ -37,7 +37,7 @@ export function post(req, res, next) {
     });
 
     parser.on('finish', () => {
-      // console.log('finished with csv data: ', tsJson);
+      //console.log('finished with csv data: ', tsJson);
       const postOpts = {
     		method: 'post',
     		headers: {'Content-Type': 'application/json'},
