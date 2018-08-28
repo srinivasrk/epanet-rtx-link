@@ -1,7 +1,7 @@
-# dockerfile for multistage build/deploy rtx-link application on x86
-FROM <base_image> as builder
+# dockerfile for multistage build/deploy rtx-link application on arm
+FROM resin/armv7hf-debian-qemu as builder
 
-#<build_start>
+RUN ["cross-build-start"]
 
 # this layer is shared with deploy:
 RUN apt-get update && \
@@ -33,7 +33,7 @@ RUN tar xfz ${boost_dir}.tar.gz \
     && cd .. && rm -rf ${boost_dir} && ldconfig
 
 
-#<jessie-backports>RUN printf "deb http://ftp.debian.org/debian jessie-backports main" > /etc/apt/sources.list.d/backports.list && apt-get update && apt-get -t jessie-backports install "cmake"
+RUN printf "deb http://ftp.debian.org/debian jessie-backports main" > /etc/apt/sources.list.d/backports.list && apt-get update && apt-get -t jessie-backports install "cmake"
 
 WORKDIR /opt
 
@@ -63,7 +63,12 @@ RUN curl -L -o granada.tar.gz https://github.com/webappsdk/granada/archive/1.56.
 	&& cd /opt/src \
 	&& rm -rf granada
 
-COPY epanet-rtx /opt/epanet-rtx
+WORKDIR /opt
+
+RUN git clone https://github.com/OpenWaterAnalytics/epanet-rtx.git \
+        && cd epanet-rtx \
+        && git checkout dev
+
 WORKDIR /opt/epanet-rtx
 
 ## build LINK service (rtx-based tier-2 data synchronization service)
@@ -73,7 +78,8 @@ RUN cd examples/LINK/service/cmake && \
     cmake .. && \
     make && make install
 
-#<build_end>
+RUN ["cross-build-end"]
+
 
 ###############################
 ## ^^^ builder ^^^ ############
@@ -82,9 +88,9 @@ RUN cd examples/LINK/service/cmake && \
 ###############################
 
 
-FROM <base_image> as deploy
+FROM resin/armv7hf-debian-qemu as deploy
 
-#<build_start>
+RUN ["cross-build-start"]
 
 # this layer recycled from build:
 RUN apt-get update && \
@@ -106,7 +112,7 @@ WORKDIR /app
 RUN npm install
 RUN npm run build
 
-#<build_end>
+RUN ["cross-build-end"]
 
 EXPOSE 3000
 VOLUME /root/rtx_link

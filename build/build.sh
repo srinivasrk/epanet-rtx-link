@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 echo "
 ██████╗ ████████╗██╗  ██╗
 ██╔══██╗╚══██╔══╝╚██╗██╔╝
@@ -115,6 +116,7 @@ sed "s|<tds_path>|${tds_path}|" templates/odbcinst.ini.template > tmp/odbcinst.i
 case "$platform" in
     cross)  sed -i '.bak' 's/#<build_start>/RUN ["cross-build-start"]/' tmp/Dockerfile
             sed -i '.bak' 's/#<build_end>/RUN ["cross-build-end"]/' tmp/Dockerfile
+						sed -i '.bak' 's/#<jessie-backports>//' tmp/Dockerfile
             ;;
 esac
 
