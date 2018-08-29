@@ -100,13 +100,18 @@ RUN apt-get update && \
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash && \
 	apt-get -y install nodejs
 
-COPY armv7/odbcinst.ini /etc/odbcinst.ini
+COPY odbcinst.ini /etc/odbcinst.ini
 
 # copy the frontend and service binary
-COPY frontend /app
-COPY --from=builder /usr/local/bin/link-server /app/srv/linux/link-server
+WORKDIR /opt/src
+RUN curl -JLO https://github.com/OpenWaterAnalytics/epanet-rtx-link/archive/master.tar.gz \
+		&& tar -xzf epanet-rtx-link-master.tar.gz \
+		&& cd epanet-rtx-link-master \
+		&&  cp -r frontend/* /app/
 
 WORKDIR /app
+RUN rm -rf /opt/src/*
+COPY --from=builder /usr/local/bin/link-server /app/srv/linux/link-server
 
 # install node frontend application and dependencies
 RUN npm install

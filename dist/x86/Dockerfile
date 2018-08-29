@@ -54,8 +54,14 @@ RUN rm -rf /opt/dep-build
 
 COPY odbcinst.ini /etc/odbcinst.ini
 
-# copy the frontend and service binary
-COPY frontend /app
+WORKDIR /opt/src
+RUN curl -JLO https://github.com/OpenWaterAnalytics/epanet-rtx-link/archive/master.tar.gz \
+		&& tar -xzf epanet-rtx-link-master.tar.gz \
+		&& cd epanet-rtx-link-master \
+		&&  cp -r frontend/* /app/
+
+WORKDIR /app
+RUN rm -rf /opt/src/*
 COPY --from=builder /usr/local/bin/link-server /app/srv/linux/link-server
 
 # install node frontend application and dependencies
