@@ -41,7 +41,7 @@ RUN curl -JLO https://github.com/openlink/iODBC/archive/v3.52.12.tar.gz && \
 
 RUN curl -JLO ftp://ftp.freetds.org/pub/freetds/stable/freetds-patched.tar.gz && \
     tar -xzf freetds-patched.tar.gz && \
-    cd freetds-1.00.94 && \
+    cd freetds-1.00.97 && \
     ./configure --with-iodbc=/usr --prefix=/usr --disable-libiconv && \
     make && make install
 

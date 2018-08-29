@@ -100,10 +100,10 @@ RUN apt-get update && \
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash && \
 	apt-get -y install nodejs
 
-COPY odbcinst.ini /etc/odbcinst.ini
+COPY armv7/odbcinst.ini /etc/odbcinst.ini
 
 # copy the frontend and service binary
-COPY link-frontend /app
+COPY frontend /app
 COPY --from=builder /usr/local/bin/link-server /app/srv/linux/link-server
 
 WORKDIR /app
