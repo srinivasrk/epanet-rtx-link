@@ -31,7 +31,7 @@ RUN ["cross-build-end"]
 FROM resin/armv7hf-debian-qemu as deploy
 
 RUN ["cross-build-start"]
-
+WORKDIR /app
 # this layer recycled from build:
 RUN apt-get update && \
 	apt-get install -y libiodbc2 tdsodbc openssl libsqlite3-dev curl
