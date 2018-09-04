@@ -114,6 +114,8 @@ sed "s|<base_image>|${base_img}|" templates/Dockerfile.template > tmp/Dockerfile
 sed "s|<tds_path>|${tds_path}|" templates/odbcinst.ini.template > tmp/odbcinst.ini
 
 case "$platform" in
+    x86)    sed -i '.bak' 's/#<non-jessie>//' tmp/Dockerfile
+            ;;
     cross)  sed -i '.bak' 's/#<build_start>/RUN ["cross-build-start"]/' tmp/Dockerfile
             sed -i '.bak' 's/#<build_end>/RUN ["cross-build-end"]/' tmp/Dockerfile
 						sed -i '.bak' 's/#<jessie-backports>//' tmp/Dockerfile

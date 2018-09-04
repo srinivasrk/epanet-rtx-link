@@ -7,14 +7,14 @@ var MemoryStore = require('session-memory-store')(session);
 const Guid = require('guid');
 
 module.exports.init = (app) => {
-  const guidSecret = Guid.create().value;
-  console.log(`SESSION SECRET IS: ${guidSecret}`);
+  const guidName = Guid.create().value.substring(0,8);
   app.use(compression({ threshold: 0 }));
   app.use(bodyParser.json({limit: '50mb'}));
   app.use(bodyParser.urlencoded({extended: false}));
   app.use(
   	session({
-    	secret: guidSecret,
+      name: guidName,
+    	secret: 'majority.heritage.wink.mind',
   		store: new MemoryStore(),
     	resave: false,
     	saveUninitialized: false,
