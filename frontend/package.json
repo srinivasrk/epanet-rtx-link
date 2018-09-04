@@ -41,7 +41,7 @@
     "popper.js": "^1.14.1",
     "request": "^2.85.0",
     "respawn": "^2.5.0",
-    "sapper": "^0.12.0",
+    "sapper": "^0.20.0",
     "serve-static": "^1.13.1",
     "session-memory-store": "^0.2.2",
     "style-loader": "^0.20.3",
