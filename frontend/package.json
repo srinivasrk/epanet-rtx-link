@@ -32,6 +32,7 @@
     "express-flash": "0.0.2",
     "express-session": "^1.15.6",
     "fs-extra": "^5.0.0",
+    "guid": "0.0.12",
     "jquery": "^3.3.1",
     "jsonfile": "^4.0.0",
     "minimist": "^1.2.0",
