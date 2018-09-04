@@ -8,7 +8,6 @@ const Guid = require('guid');
 
 module.exports.init = (app) => {
   const guidName = Guid.create().value.substring(0,8);
-  console.log(`SESSION NAME IS: ${guidName}`);
   app.use(compression({ threshold: 0 }));
   app.use(bodyParser.json({limit: '50mb'}));
   app.use(bodyParser.urlencoded({extended: false}));
