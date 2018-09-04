@@ -8,9 +8,10 @@ const Guid = require('guid');
 
 module.exports.init = (app) => {
   const guidSecret = Guid.create().value;
+  console.log(`SESSION SECRET IS: ${guidSecret}`);
   app.use(compression({ threshold: 0 }));
-  app.use(bodyParser.json({limit: '50mb'}))
-  app.use(bodyParser.urlencoded({extended: false}))
+  app.use(bodyParser.json({limit: '50mb'}));
+  app.use(bodyParser.urlencoded({extended: false}));
   app.use(
   	session({
     	secret: guidSecret,
