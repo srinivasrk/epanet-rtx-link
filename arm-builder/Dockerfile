@@ -1,7 +1,7 @@
-# dockerfile for multistage build/deploy rtx-link application on x86
-FROM <base_image> as builder
+# dockerfile for multistage build/deploy rtx-link application on arm
+FROM resin/armv7hf-debian-qemu
 
-#<build_start>
+RUN ["cross-build-start"]
 
 # this layer is shared with deploy:
 RUN apt-get update && \
@@ -33,7 +33,7 @@ RUN tar xfz ${boost_dir}.tar.gz \
     && cd .. && rm -rf ${boost_dir} && ldconfig
 
 
-#<jessie-backports>RUN printf "deb http://ftp.debian.org/debian jessie-backports main" > /etc/apt/sources.list.d/backports.list && apt-get update && apt-get -t jessie-backports install "cmake"
+RUN printf "deb http://ftp.debian.org/debian jessie-backports main" > /etc/apt/sources.list.d/backports.list && apt-get update && apt-get -t jessie-backports install "cmake"
 
 WORKDIR /opt
 
@@ -63,51 +63,6 @@ RUN curl -L -o granada.tar.gz https://github.com/webappsdk/granada/archive/1.56.
 	&& cd /opt/src \
 	&& rm -rf granada
 
-COPY epanet-rtx /opt/epanet-rtx
-WORKDIR /opt/epanet-rtx
+WORKDIR /opt
 
-## build LINK service (rtx-based tier-2 data synchronization service)
-RUN cd examples/LINK/service/cmake && \
-    mkdir build && \
-    cd build && \
-    cmake .. && \
-    make && make install
-
-#<build_end>
-
-###############################
-## ^^^ builder ^^^ ############
-###############################
-## vvv deploy vvvv ############
-###############################
-
-
-FROM <base_image> as deploy
-
-#<build_start>
-
-# this layer recycled from build:
-RUN apt-get update && \
-	apt-get install -y libiodbc2 tdsodbc openssl libsqlite3-dev curl
-
-# install NODEJS - runtime for LINK frontend application
-RUN curl -sL https://deb.nodesource.com/setup_8.x | bash && \
-	apt-get -y install nodejs
-
-COPY odbcinst.ini /etc/odbcinst.ini
-
-# copy the frontend and service binary
-COPY link-frontend /app
-COPY --from=builder /usr/local/bin/link-server /app/srv/linux/link-server
-
-WORKDIR /app
-
-# install node frontend application and dependencies
-RUN npm install
-RUN npm run build
-
-#<build_end>
-
-EXPOSE 3000
-VOLUME /root/rtx_link
-CMD [ "npm", "start" ]
+RUN ["cross-build-end"]
