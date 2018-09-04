@@ -1,9 +1,8 @@
 import { init } from 'sapper/runtime.js';
 import { routes } from './manifest/client.js';
-import App from './App.html';
+import { manifest } from './manifest/client.js';
 
 init({
 	target: document.querySelector('#sapper'),
-	routes,
-	App
+	manifest
 });

@@ -10,8 +10,7 @@ var configuration = require('../model/configuration.js');
 var spawnMonitor = require('../model/spawnMonitor.js');
 
 
-import { routes } from './manifest/server.js';
-import App from './App.html';
+import { manifest } from './manifest/server.js';
 const { PORT = 3000 } = process.env;
 
 // check runtime options using minimist
@@ -38,10 +37,7 @@ app.use(serve('assets'));
 auth.init(app);
 app.use(
   auth.check,
-  sapper({
-    routes,
-    App
-  })
+  sapper({ manifest })
 );
 
 app.listen(PORT, () => {
