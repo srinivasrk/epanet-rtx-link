@@ -34,6 +34,7 @@ RUN tar xfz ${boost_dir}.tar.gz \
 
 
 #<jessie-backports>RUN printf "deb http://ftp.debian.org/debian jessie-backports main" > /etc/apt/sources.list.d/backports.list && apt-get update && apt-get -t jessie-backports install "cmake"
+#<non-jessie>RUN apt-get install cmake
 
 WORKDIR /opt
 
